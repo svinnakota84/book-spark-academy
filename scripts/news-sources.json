@@ -1,0 +1,36 @@
+[
+  {
+    "name": "NIST", "topic": "Technology", "host": "www.nist.gov",
+    "feed": "https://www.nist.gov/news-events/news/rss.xml",
+    "articlePath": "/news-events/news/",
+    "policy": "https://www.nist.gov/copyrights-disclaimers",
+    "policyMarker": "information presented on nist sites are considered public information and may be distributed or copied",
+    "enabled": true
+  },
+  {
+    "name": "NASA", "topic": "Science", "host": "www.nasa.gov",
+    "feed": "https://www.nasa.gov/news-release/feed/",
+    "articlePath": "/news-release/",
+    "policy": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+    "policyMarker": "nasa content used in a factual manner that does not imply endorsement may be used without needing explicit permission",
+    "enabled": true
+  },
+  {
+    "name": "Federal Reserve Board", "topic": "Economy", "host": "www.federalreserve.gov",
+    "feed": "https://www.federalreserve.gov/feeds/press_all.xml",
+    "articlePath": "/newsevents/pressreleases/",
+    "policy": "https://www.federalreserve.gov/disclaimer.htm",
+    "policyMarker": "information on board's website is in the public domain and may be copied and distributed without permission",
+    "enabled": true
+  },
+  {
+    "name": "UN News",
+    "policy": "https://www.un.org/en/about-us/terms-of-use/",
+    "enabled": false
+  },
+  {
+    "name": "NASA JPL",
+    "policy": "https://www.jpl.nasa.gov/jpl-image-use-policy/",
+    "enabled": false
+  }
+]

@@ -12,8 +12,8 @@ pages. Scheduled runs at minutes 13 and 43 generate the shared JSON and deploy
 it with the rest of the site. GitHub can delay scheduled runs.
 
 Source links remain available when the feed cannot be loaded. Partial feed
-failures display a status. A complete fetch failure skips deployment so the
-previous edition remains available and is marked delayed when it ages.
+failures display a status. If all approved feeds fail, the job publishes an empty edition with an
+unavailable status. The workflow log records source and article checks.
 The existing My Learning page is a public preview. Customer sign-in and
 subscription access require a separate authentication integration.
 
