@@ -1,0 +1,19 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:01.883
+Practical AI for Everyday Work.
+
+00:00:01.883 --> 00:00:06.865
+A good prompt describes the intended reader, the
+task, the inputs, and the output.
+
+00:00:06.865 --> 00:00:09.417
+Suppose a colleague needs a status update.
+
+00:00:09.417 --> 00:00:14.460
+Give the model three verified bullets and ask
+for an email under one hundred words.
+
+00:00:14.460 --> 00:00:17.680
+Tell it to mark any missing date instead of
+guessing.
