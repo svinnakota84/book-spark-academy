@@ -1,0 +1,12 @@
+name = "bookspark-assistant"
+main = "worker.mjs"
+compatibility_date = "2026-11-22"
+
+[vars]
+SITE_ORIGIN = "https://bookspark.radiantsparkllc.com"
+OPENAI_MODEL = "gpt-5.4-mini"
+
+[[ratelimits]]
+name = "ASK_LIMIT"
+namespace_id = "701"
+simple = { limit = 5, period = 60 }

@@ -1,0 +1,43 @@
+name: Publish BookSpark Daily Brief
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '13,43 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bookspark-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare site and refresh headlines
+        run: |
+          mkdir -p "$RUNNER_TEMP/bookspark-site"
+          git archive HEAD | tar -xf - -C "$RUNNER_TEMP/bookspark-site"
+          rm -rf "$RUNNER_TEMP/bookspark-site/.github" "$RUNNER_TEMP/bookspark-site/scripts" "$RUNNER_TEMP/bookspark-site/assistant-worker"
+          python3 scripts/refresh-news.py "$RUNNER_TEMP/bookspark-site/daily-brief.json"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/bookspark-site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.publish.outputs.page_url }}
+    steps:
+      - id: publish
+        uses: actions/deploy-pages@v4

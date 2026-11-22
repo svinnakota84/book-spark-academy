@@ -1,0 +1,12 @@
+.daily-brief-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr));gap:1rem}
+.daily-brief-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:1rem}
+.daily-brief-card h3{margin:.45rem 0;line-height:1.4}
+.daily-brief-card a{text-decoration:underline;text-underline-offset:.18em}
+.daily-brief-card small,.daily-brief-card time{color:var(--muted);font-size:.875rem}
+.daily-brief-sources a{text-decoration:underline}
+
+#ask-bookspark form:not([hidden]){display:grid;gap:.75rem;max-width:48rem}
+#ask-bookspark textarea{width:100%;padding:.75rem;font:inherit;font-size:1rem;border:1px solid var(--line);border-radius:.6rem;resize:vertical}
+#ask-bookspark form button{justify-self:start}
+#ask-bookspark [data-ask-answer]{white-space:pre-wrap;overflow-wrap:anywhere;max-width:70ch}
+#ask-bookspark [data-ask-sources] a{text-decoration:underline}
