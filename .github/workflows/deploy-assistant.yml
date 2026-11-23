@@ -1,0 +1,75 @@
+name: Deploy Ask BookSpark
+on:
+  workflow_dispatch:
+    inputs:
+      endpoint:
+        description: Public HTTPS workers.dev URL ending in /ask
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bookspark-assistant
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: assistant-worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check deployment configuration
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ASK_URL: ${{ inputs.endpoint }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          for name in ('CLOUDFLARE_ACCOUNT_ID', 'CLOUDFLARE_API_TOKEN', 'OPENAI_API_KEY'):
+              if not os.environ.get(name):
+                  raise SystemExit(f'Missing repository secret: {name}')
+          if not re.fullmatch(r'https://bookspark-assistant\.[a-z0-9-]+\.workers\.dev/ask', os.environ['ASK_URL']):
+              raise SystemExit('Enter the HTTPS bookspark-assistant workers.dev URL with /ask.')
+          PY
+          node --check worker.mjs
+      - name: Install Wrangler
+        run: npm install --no-save --ignore-scripts wrangler@4.46.0
+      - name: Deploy customer assistant
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          npx --no-install wrangler deploy
+          printf '%s' "$OPENAI_API_KEY" | npx --no-install wrangler secret put OPENAI_API_KEY
+      - name: Verify a real AI answer
+        env:
+          ASK_URL: ${{ inputs.endpoint }}
+        run: |
+          response="$RUNNER_TEMP/bookspark-ask-smoke.json"
+          curl --fail --silent --show-error --max-time 65 --output "$response" \
+            --header 'Origin: https://bookspark.radiantsparkllc.com' \
+            --header 'Content-Type: application/json' \
+            --data '{"question":"Explain in one sentence how a checklist helps a student review written work."}' \
+            "$ASK_URL"
+          python3 - "$response" <<'PY'
+          import json
+          import sys
+          with open(sys.argv[1], encoding='utf-8') as response:
+              data = json.load(response)
+          if not isinstance(data.get('answer'), str) or not data['answer'].strip():
+              raise SystemExit('The endpoint did not return a usable AI answer.')
+          print('Ask BookSpark returned an AI answer.')
+          PY

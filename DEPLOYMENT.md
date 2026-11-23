@@ -88,3 +88,19 @@ grades the answers. A score of four or higher earns one saved certificate per
 learner and module. The certificate is a BookSpark completion record. It is not
 an accredited or Oracle credential. Paid activation checks should include
 passing, failing, retrying, and reopening the certificate as the same learner.
+
+### Deploying Ask BookSpark from GitHub
+
+Add the Cloudflare account ID, a Cloudflare API token scoped to the designated
+Workers account, and a dedicated OpenAI project API key as GitHub Actions
+repository secrets. Name them CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN,
+and OPENAI_API_KEY. The deployment job puts the model key in Worker secrets.
+The public website should contain only the HTTPS endpoint, never credentials.
+
+Run the **Deploy Ask BookSpark** workflow from main. Enter the public Worker
+URL in the form https://bookspark-assistant.<workers-subdomain>.workers.dev/ask.
+Cloudflare workers.dev must be configured for the account. The workflow makes
+one actual OpenAI request to confirm a nonempty response. It can incur API
+usage. After it passes, set ASK_ENDPOINT in ask-bookspark.js to this verified
+URL and publish the site. Retest the site with one help-guide question and a
+different question that only the AI backend can answer.
