@@ -12,6 +12,22 @@ const billing = section.querySelector("[data-manage-membership]");
 let auth;
 let catalog = [];
 let access = null;
+const selected = new URLSearchParams(location.search).get("course");
+const assessment = player.querySelector("[data-assessment]");
+const complete = player.querySelector("[data-course-complete]");
+const certificateDialog = document.querySelector("#certificate-dialog");
+let playingCourse;
+
+function showCertificate(course, certificate) {
+  certificateDialog.querySelector("[data-certificate-name]").textContent = certificate.certificate_name;
+  certificateDialog.querySelector("[data-certificate-course]").textContent = course.title;
+  certificateDialog.querySelector("[data-certificate-date]").textContent = "Issued " + new Date(certificate.issued_at).toLocaleDateString();
+  certificateDialog.querySelector("[data-certificate-id]").textContent = "Certificate ID " + certificate.certificate_id;
+  if (!certificateDialog.open) certificateDialog.showModal();
+}
+certificateDialog.querySelector("#certificate-close").onclick = () => certificateDialog.close();
+certificateDialog.querySelector("#certificate-print").onclick = () => window.print();
+
 
 async function call(action, data = {}) {
   const { data: sessionData } = await auth.auth.getSession();
@@ -54,7 +70,15 @@ function renderCourses() {
     const goal = document.createElement("p");
     title.textContent = course.title;
     goal.textContent = course.goal;
+    card.id = "course-" + course.slug;
+    if (course.slug === selected) card.setAttribute("data-selected-course", "");
     card.append(title, goal);
+    if (access?.credentials?.includes(course.slug)) {
+      card.append(button("View certificate", async () => {
+        const result = await call("certificate", { course: course.slug });
+        showCertificate(course, result.certificate);
+      }));
+    }
     if (access?.member || access?.purchased.includes(course.slug)) {
       card.append(button("Play course", () => play(course)));
     } else if (access) {
@@ -66,6 +90,10 @@ function renderCourses() {
 
 async function play(course) {
   const files = await call("play", { course: course.slug });
+  playingCourse = course;
+  assessment.hidden = true;
+  assessment.replaceChildren();
+  complete.hidden = false;
   const video = player.querySelector("video");
   video.pause();
   video.replaceChildren();
@@ -83,6 +111,68 @@ async function play(course) {
   video.focus();
 }
 
+complete.addEventListener("click", () => perform(complete, async () => {
+  const course = playingCourse;
+  if (!course) return;
+  await call("complete", { course: course.slug });
+  const { questions } = await call("assessment", { course: course.slug });
+  if (playingCourse !== course) return;
+  assessment.replaceChildren();
+  for (const [i, question] of questions.entries()) {
+    const fieldset = document.createElement("fieldset");
+    const legend = document.createElement("legend");
+    legend.textContent = question.prompt;
+    fieldset.append(legend);
+    for (const [j, choice] of question.choices.entries()) {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "answer-" + i;
+      input.value = String(j);
+      input.required = true;
+      label.append(input, " " + choice);
+      fieldset.append(label);
+    }
+    assessment.append(fieldset);
+  }
+  const label = document.createElement("label");
+  label.textContent = "Your name as it should appear on the certificate";
+  const name = document.createElement("input");
+  name.type = "text";
+  name.name = "certificateName";
+  name.autocomplete = "name";
+  name.minLength = 2;
+  name.maxLength = 100;
+  name.required = true;
+  label.append(name);
+  const submit = document.createElement("button");
+  submit.className = "btn";
+  submit.type = "submit";
+  submit.textContent = "Submit assessment";
+  assessment.append(label, submit);
+  assessment.onsubmit = event => {
+    event.preventDefault();
+    perform(submit, async () => {
+      const answers = new FormData(assessment);
+      const result = await call("submit-assessment", {
+        course: course.slug, name: name.value,
+        answers: questions.map((_, i) => Number(answers.get("answer-" + i))),
+      });
+      if (playingCourse !== course) return;
+      status.textContent = result.passed
+        ? "Passed " + result.score + " of " + result.total + ". Your BookSpark certificate is ready."
+        : "Score " + result.score + " of " + result.total + ". Review the lesson and try again.";
+      if (result.passed) {
+        access.credentials = [...new Set([...(access.credentials || []), course.slug])];
+        renderCourses();
+        showCertificate(course, result.certificate);
+      }
+    });
+  };
+  assessment.hidden = false;
+  assessment.querySelector("input").focus();
+}));
+
 async function purchase(offer) {
   const result = await call("checkout", offer);
   window.location.assign(result.url);
@@ -96,6 +186,8 @@ async function loadAccount() {
   access = null;
   renderCourses();
   player.hidden = true;
+  playingCourse = null;
+  assessment.hidden = true;
   if (!signedIn) {
     player.querySelector("video").removeAttribute("src");
     player.querySelector("video").load();

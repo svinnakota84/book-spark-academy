@@ -8,3 +8,12 @@
 .member-actions input{font:inherit;font-size:1rem;min-width:min(100%,14rem);padding:.6rem;border:1px solid var(--line);border-radius:.5rem}
 .member-player video{display:block;width:min(100%,60rem);aspect-ratio:16/9;background:#142a24;border-radius:14px}
 .member-player a{text-decoration:underline}
+.learning-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr));gap:.75rem 2rem;padding-left:1.25rem}
+.learning-steps li{padding:.5rem 0;color:var(--muted)}.learning-steps strong{display:block;color:var(--ink)}
+[data-selected-course]{outline:2px solid var(--green);outline-offset:2px}
+[data-assessment] fieldset{margin:.7rem 0;border:1px solid var(--line);border-radius:.4rem}
+[data-assessment] fieldset label{display:block;padding:.25rem 0}
+[data-assessment] input[type=text]{display:block;margin:.35rem 0 1rem;width:min(100%,24rem);padding:.5rem}
+#certificate-dialog{width:min(94vw,42rem);padding:1.35rem;border:1px solid var(--line);border-radius:1rem;color:var(--ink)}
+#certificate-dialog::backdrop{background:#172b2480}.certificate-page{border:2px solid var(--green);padding:clamp(1rem,5vw,3rem);margin:.65rem 0;text-align:center}
+@media print{body:has(#certificate-dialog[open])>header,body:has(#certificate-dialog[open]) main>:not(#certificate-dialog),#certificate-dialog button{display:none!important}body:has(#certificate-dialog[open]) main{padding:0}#certificate-dialog[open]{position:static;width:100%;max-width:none;max-height:none;border:0;padding:0;margin:0}#certificate-dialog::backdrop{display:none}}

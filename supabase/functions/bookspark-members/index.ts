@@ -1,3 +1,4 @@
+import { grade, questionsFor } from "./assessment.mjs";
 import Stripe from "npm:stripe@23.2.0";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { chargeInGoodStanding, membershipActive, purchasePaid } from "./access.mjs";
@@ -145,7 +146,11 @@ Deno.serve(async request => {
     const customer = await stripeCustomer(user, action === "checkout");
     const access = await accessFor(customer);
     if (action === "library") {
-      return reply({ member: access.member, purchased: [...access.purchased] });
+      const earned = await db.from("bookspark_course_completion").select("course_slug")
+        .eq("user_id", user.id).not("certificate_id", "is", null);
+      if (earned.error) throw earned.error;
+      return reply({ member: access.member, purchased: [...access.purchased],
+        credentials: earned.data.map(item => item.course_slug) });
     }
     if (action === "portal" && customer) {
       const portal = await stripe.billingPortal.sessions.create({ customer, return_url: returnUrl });
@@ -155,6 +160,42 @@ Deno.serve(async request => {
 
     const data = await request.json().catch(() => ({}));
     const slug = typeof data.course === "string" ? data.course : "";
+    if (["complete", "assessment", "submit-assessment", "certificate"].includes(action)) {
+      if (!Object.hasOwn(coursePrices, slug)) return reply({ error: "Course not found." }, 404);
+      const record = () => db.from("bookspark_course_completion")
+        .select("certificate_id,certificate_name,issued_at").eq("user_id", user.id)
+        .eq("course_slug", slug).maybeSingle();
+      if (action === "certificate") {
+        const result = await record();
+        if (result.error) throw result.error;
+        return result.data?.certificate_id ? reply({ certificate: result.data })
+          : reply({ error: "No completion certificate has been earned." }, 404);
+      }
+      if (!access.member && !access.purchased.has(slug)) return reply({ error: "This course is locked." }, 403);
+      if (action === "complete") {
+        const result = await db.from("bookspark_course_completion")
+          .upsert({ user_id: user.id, course_slug: slug }, { onConflict: "user_id,course_slug", ignoreDuplicates: true });
+        if (result.error) throw result.error;
+        return reply({ complete: true });
+      }
+      const existing = await record();
+      if (existing.error) throw existing.error;
+      if (!existing.data) return reply({ error: "Mark the video and exercise complete first." }, 409);
+      if (action === "assessment") return reply({ questions: questionsFor(slug) });
+      const result = grade(slug, data.answers);
+      const name = typeof data.name === "string" ? data.name.trim() : "";
+      if (!result || name.length < 2 || name.length > 100) return reply({ error: "Enter your name and answer each question." }, 400);
+      if (!result.passed) return reply(result);
+      if (!existing.data.certificate_id) {
+        const update = await db.from("bookspark_course_completion").update({
+          certificate_id: crypto.randomUUID(), certificate_name: name, issued_at: new Date().toISOString(),
+        }).eq("user_id", user.id).eq("course_slug", slug).is("certificate_id", null);
+        if (update.error) throw update.error;
+      }
+      const issued = await record();
+      if (issued.error || !issued.data?.certificate_id) throw new Error("Certificate creation failed");
+      return reply({ ...result, certificate: issued.data });
+    }
     if (action === "play") {
       if (!Object.hasOwn(coursePrices, slug)) return reply({ error: "Course not found." }, 404);
       if (!access.member && !access.purchased.has(slug)) return reply({ error: "This course is locked." }, 403);

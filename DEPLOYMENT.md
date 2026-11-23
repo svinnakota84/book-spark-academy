@@ -78,3 +78,13 @@ links for entitled users only. A link already issued lasts until its expiry.
 Membership unlocks all six modules as soon as payment clears. A one-time
 purchase unlocks the selected course. No release scheduler is needed for
 immediate access. Future lesson releases require additional prepared material.
+
+### Assessments and completion certificates
+
+Apply both migrations before deploying the membership function. After private
+playback and the exercise, the learner records their own completion and can
+take the five-question BookSpark assessment. The server checks paid access and
+grades the answers. A score of four or higher earns one saved certificate per
+learner and module. The certificate is a BookSpark completion record. It is not
+an accredited or Oracle credential. Paid activation checks should include
+passing, failing, retrying, and reopening the certificate as the same learner.
