@@ -23,7 +23,7 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/bookspark-site"
           git archive HEAD | tar -xf - -C "$RUNNER_TEMP/bookspark-site"
-          rm -rf "$RUNNER_TEMP/bookspark-site/.github" "$RUNNER_TEMP/bookspark-site/scripts" "$RUNNER_TEMP/bookspark-site/assistant-worker"
+          rm -rf "$RUNNER_TEMP/bookspark-site/.github" "$RUNNER_TEMP/bookspark-site/scripts" "$RUNNER_TEMP/bookspark-site/assistant-worker" "$RUNNER_TEMP/bookspark-site/supabase"
           python3 scripts/refresh-news.py "$RUNNER_TEMP/bookspark-site/daily-brief.json"
       - uses: actions/upload-pages-artifact@v3
         with:

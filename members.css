@@ -1,0 +1,10 @@
+.member-courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr));gap:1rem;margin-top:1rem}
+.member-courses article{display:flex;flex-direction:column;align-items:flex-start;gap:.4rem;padding:1.2rem;background:#fff;border:1px solid var(--line);border-radius:14px}
+.member-courses h3,.member-courses p{margin:0}
+.member-courses h3{font:800 1.15rem/1.3 Manrope,system-ui,sans-serif}
+.member-courses p{color:var(--muted)}
+.member-courses button{margin-top:.65rem}
+.member-actions:not([hidden]){display:flex;flex-wrap:wrap;align-items:center;gap:.7rem;margin:1rem 0}
+.member-actions input{font:inherit;font-size:1rem;min-width:min(100%,14rem);padding:.6rem;border:1px solid var(--line);border-radius:.5rem}
+.member-player video{display:block;width:min(100%,60rem);aspect-ratio:16/9;background:#142a24;border-radius:14px}
+.member-player a{text-decoration:underline}

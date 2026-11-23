@@ -39,3 +39,42 @@ question. Verify the response and the current-events source links.
 The Worker rate-limits by client IP. This is a public assistant. The site
 does not have authenticated customer sessions or account-specific answers.
 Questions are sent to OpenAI for processing.
+
+## Course membership and individual purchases
+
+The public catalog and sample can deploy independently. GitHub Pages must never
+receive the private training ZIP, its full MP4s, or any server credentials.
+
+1. In an active Supabase project, apply the migration and deploy the
+   bookspark-members Edge Function. Configure Auth email delivery and allow
+   the exact BookSpark learning-page redirect. This function verifies users
+   with Supabase Auth and verifies Stripe webhook signatures itself.
+2. Upload the six MP4s, six VTTs, and six Markdown lesson files from
+   BookSpark-training-videos.zip to the root of the private
+   bookspark-courses bucket. Preserve filenames. The public catalog contains
+   only titles and goals.
+3. In a Stripe sandbox, configure a $15 USD monthly price and one USD
+   one-time price per course, along with the hosted Customer Portal and terms
+   URL. Add a webhook destination at the Edge Function URL plus /webhook for
+   all types in watchedEvents. Confirm your tax treatment and finalized
+   customer terms before moving from sandbox to live.
+4. Set BOOKSPARK_ORIGIN, BOOKSPARK_STRIPE_MODE (sandbox or live),
+   BOOKSPARK_STRIPE_KEY (restricted key), BOOKSPARK_STRIPE_WEBHOOK_SECRET,
+   BOOKSPARK_MEMBERSHIP_PRICE, and BOOKSPARK_COURSE_PRICES (JSON object mapping
+   every slug in member-catalog.json to the corresponding Stripe price).
+   Store credentials only in Edge Function secrets. Set
+   BOOKSPARK_CHECKOUT_ENABLED=true in sandbox when contents are loaded.
+   Configure members.js with the test project's public URL and publishable
+   key in a test deployment. Leave production configuration blank until
+   launch checks pass.
+5. Verify email sign-in, monthly purchase, one-time purchase, locked course
+   access, incomplete payment, duplicate webhook, refund, failed renewal,
+   cancellation, private playback, captions, download, and sign-out. Confirm
+   the live account and environment separately before enabling production.
+
+The signed webhook records lifecycle events. Library and playback requests
+resolve access from Stripe's latest state and issue new ten-minute asset
+links for entitled users only. A link already issued lasts until its expiry.
+Membership unlocks all six modules as soon as payment clears. A one-time
+purchase unlocks the selected course. No release scheduler is needed for
+immediate access. Future lesson releases require additional prepared material.

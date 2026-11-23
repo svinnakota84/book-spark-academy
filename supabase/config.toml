@@ -1,0 +1,2 @@
+[functions.bookspark-members]
+verify_jwt = false
