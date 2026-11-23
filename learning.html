@@ -10,7 +10,12 @@
 .logo span{color:#ffac68}.hero h1 em{color:#ffac68}.hero-art .orb{background:#255aa0}.mini .tag{background:#203d60;color:#bcdaff}.news:nth-child(2){border-top:3px solid #649df0}.news:nth-child(3){border-top:3px solid #f3a05e}.course:nth-child(3n+2) .cover{background:#55341f;color:#ffd1a4}.course:nth-child(3n) .cover{background:#203d60;color:#c6ddff}.course:nth-child(3n) .textbutton{color:#9bc6ff}.course:nth-child(3n+2) .textbutton{color:#ffbc87}nav a:hover{color:#9bc6ff}.hero .actions .btn:first-child{background:#285eab;border-color:#5687cb}.hero .actions .outline{border-color:#e99656;color:#ffc18f}.plan.featured{border-color:#e99656}.plan.featured .eyebrow{color:#ffbc87}.learn-band .btn{background:#f5a160;color:#24170e}a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #79b3ff;outline-offset:4px}
 
 :root{--ink:#202235;--green:#286549;--cream:#fafbf8;--muted:#606a73;--line:#dce3df}body{background:#fafbf8}header{background:#fff}.logo span{color:#8c2948}.hero h1 em{color:#286549}.eyebrow{color:#315f9a}.hero-art{background:#edf2fa}.hero-art .orb{background:#ffdab9}.mini{background:#fff;color:#202235}.mini.bottom,.learn-band{background:#244e39;color:white}.mini.bottom p,.learn-band p{color:#e0ece2}.mini .tag{background:#e8effb;color:#254f86}.news,.course,.plan{background:white}.news:first-child{background:#f5eaf0}.notice{background:#edf2f9;color:#4e5f75}.plan.featured{background:#f9edf2;border-color:#a74466}.promise{color:#52655a}.chip{color:#344139}.chip.active{background:#7b2945;color:white}.search{background:white;color:#202235}.outline{color:#286549;border-color:#769e83}.hero .actions .outline{color:#8b451b;border-color:#d58a51}.course:nth-child(3n+1) .cover{background:#e0efdf;color:#2d6142}.course:nth-child(3n+2) .cover{background:#ffe5d2;color:#88471b}.course:nth-child(3n) .cover{background:#dfebff;color:#315b9e}.textbutton{color:#286549}.course:nth-child(3n) .textbutton{color:#315b9e}.course:nth-child(3n+2) .textbutton{color:#8b451b}.plan.featured .eyebrow{color:#8b2948}dialog{background:#fff;color:#202235}.close{background:#edf2ed;color:#202235}.footer{color:#606a73}nav a:hover{color:#315b9e}
-</style><link rel="stylesheet" href="daily-brief.css"><script src="daily-brief.js" defer></script><script src="ask-bookspark.js" defer></script><link rel="stylesheet" href="members.css"><script src="members.js" type="module"></script></head><body><header><a class="logo" href="/">book<span>spark ✳</span></a><nav><a href="/#daily">Daily Brief</a><a href="/#courses">Courses</a><a href="/#membership">Membership</a></nav></header><main><section class="hero"><div><div class="eyebrow">Your student space</div><h1>One membership.<br><em>Your next chapter.</em></h1><p>A separate home for your subscribed courses, lesson resources, and future live classes.</p><a class="btn" href="/#membership">Explore membership</a></div><div class="mini"><span class="tag">MEMBER ACCESS · NOT YET ENABLED</span><h2>Sign-in and subscription verification</h2><p>Student accounts and paid enrollment are being prepared. No subscriber access has been granted in this preview.</p><p>Full lessons and course files will only be delivered after the server verifies an active subscription. No private course files are hosted here.</p></div></section><section class="section" id="learning-steps" aria-labelledby="step-title">
+
+.ask-quick-questions{display:flex;flex-wrap:wrap;gap:.55rem;margin:1rem 0}
+.ask-quick-questions button{font-size:.9rem}
+#ask-bookspark small{color:var(--muted)}
+#ask-bookspark [data-ask-answer]:not(:empty){margin-top:1rem;padding:1rem;border:1px solid var(--line);border-radius:.55rem;background:#fff}
+</style><link rel="stylesheet" href="daily-brief.css"><script src="daily-brief.js" defer></script><script src="ask-bookspark.js?v=help-guide" defer></script><link rel="stylesheet" href="members.css"><script src="members.js" type="module"></script></head><body><header><a class="logo" href="/">book<span>spark ✳</span></a><nav><a href="/#daily">Daily Brief</a><a href="/#courses">Courses</a><a href="/#membership">Membership</a></nav></header><main><section class="hero"><div><div class="eyebrow">Your student space</div><h1>One membership.<br><em>Your next chapter.</em></h1><p>A separate home for your subscribed courses, lesson resources, and future live classes.</p><a class="btn" href="/#membership">Explore membership</a></div><div class="mini"><span class="tag">MEMBER ACCESS · NOT YET ENABLED</span><h2>Sign-in and subscription verification</h2><p>Student accounts and paid enrollment are being prepared. No subscriber access has been granted in this preview.</p><p>Full lessons and course files will only be delivered after the server verifies an active subscription. No private course files are hosted here.</p></div></section><section class="section" id="learning-steps" aria-labelledby="step-title">
 <div class="heading"><div><h2 id="step-title">From preview to course completion</h2>
 <p>Start with a public preview. The course library, assessments, and certificates require paid access.</p></div></div>
 <ol class="learning-steps">
@@ -80,14 +85,22 @@
 </section>
 <section class="section" id="ask-bookspark" aria-labelledby="ask-bookspark-title">
   <div class="heading"><div><h2 id="ask-bookspark-title">Ask BookSpark</h2>
-    <p data-ask-status role="status">The AI assistant is awaiting its service connection.</p>
+    <p data-ask-status role="status">Get quick answers from the BookSpark help guide.</p>
   </div></div>
-  <p>AI answers can contain mistakes. Verify important details against original sources. Questions are sent to OpenAI for processing. Leave out passwords, payment details, and private records.</p>
-  <form hidden>
+  <p data-ask-ai-notice hidden>AI answers can contain mistakes. Verify important details against original sources. Questions that need an AI answer are sent to OpenAI for processing.</p>
+  <div class="ask-quick-questions" aria-label="Suggested questions">
+    <button class="btn outline" type="button" data-ask-question>How much is membership?</button>
+    <button class="btn outline" type="button" data-ask-question>How do I sign in?</button>
+    <button class="btn outline" type="button" data-ask-question>Can I earn a certificate?</button>
+    <button class="btn outline" type="button" data-ask-question>Where is the free sample?</button>
+  </div>
+  <form>
     <label for="ask-question">Your question</label>
-    <textarea id="ask-question" name="question" rows="3" maxlength="2000" required></textarea>
+    <textarea id="ask-question" name="question" rows="2" maxlength="2000" required></textarea>
+    <small>Leave out passwords, payment details, and private records.</small>
     <button class="btn" type="submit">Ask BookSpark</button>
   </form>
   <div data-ask-answer tabindex="-1"></div>
-  <ul data-ask-sources aria-label="Answer sources"></ul>
+  <ul data-ask-sources aria-label="Answer links"></ul>
+  <p>Need personal help? <a href="mailto:info@radiantsparkllc.com">Email BookSpark support</a>.</p>
 </section><footer class="footer">Book Spark · Public platform preview<a href="site-notices.html">Site notices</a><a href="/">Back to homepage</a></footer></main></body></html>
